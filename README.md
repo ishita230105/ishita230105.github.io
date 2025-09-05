@@ -37,13 +37,11 @@ Installation & Setup:
 
 - Clone the repository:
 
-git clone []
-
+git clone https://github.com/ishita230105/ishita230105.github.io
 
 - Open the project folder:
 
-cd []
-
+cd Portolio
 
 - Run locally by opening index.html in your browser.
 
@@ -53,6 +51,6 @@ Name: Ishita Modi
 
 Email: ishitamodi0@gmail.com
 
-LinkedIn: []
+LinkedIn: www.linkedin.com/in/ishitamodi2301
 
-GitHub: []
+GitHub: https://github.com/ishita230105
