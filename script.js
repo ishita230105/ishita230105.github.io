@@ -104,6 +104,15 @@ class ContactFormHandler {
         this.nameField = document.getElementById('name');
         this.emailField = document.getElementById('email');
         this.messageField = document.getElementById('message');
+        this.submitBtn = document.getElementById('submitBtn');
+        this.formStatus = document.getElementById('formStatus');
+        
+        // EmailJS configuration
+        this.emailjsConfig = {
+            serviceId: 'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
+            templateId: 'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
+            publicKey: 'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
+        };
         
         this.init();
     }
@@ -198,31 +207,158 @@ class ContactFormHandler {
         }
     }
 
-    handleSubmit() {
+    async handleSubmit() {
         const isNameValid = this.validateName();
         const isEmailValid = this.validateEmail();
         const isMessageValid = this.validateMessage();
 
         if (isNameValid && isEmailValid && isMessageValid) {
-            // Simulate form submission
+            await this.sendEmail();
+        }
+    }
+
+    async sendEmail() {
+        try {
+            this.setLoadingState(true);
+            
+            // Initialize EmailJS (only needs to be done once)
+            emailjs.init(this.emailjsConfig.publicKey);
+            
+            // Professional email template HTML
+            const emailTemplate = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                        <!-- Header -->
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">New Contact Message</h1>
+                            <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px;">Portfolio Contact Form</p>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div style="padding: 40px 30px;">
+                            <div style="background-color: #f1f5f9; border-left: 4px solid #3b82f6; padding: 20px; margin-bottom: 30px; border-radius: 0 8px 8px 0;">
+                                <p style="margin: 0; color: #475569; font-size: 16px; line-height: 1.5;">
+                                    You've received a new message through your portfolio contact form. Please respond at your earliest convenience.
+                                </p>
+                            </div>
+                            
+                            <!-- Message Card -->
+                            <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+                                <!-- Message Header -->
+                                <div style="background-color: #f8fafc; padding: 20px; border-bottom: 1px solid #e2e8f0;">
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                            <span style="color: #ffffff; font-size: 20px; font-weight: bold;">{{from_name}}</span>
+                                        </div>
+                                        <div>
+                                            <h3 style="margin: 0; color: #1e293b; font-size: 18px; font-weight: 600;">{{from_name}}</h3>
+                                            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">{{from_email}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Message Content -->
+                                <div style="padding: 25px;">
+                                    <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border-left: 3px solid #3b82f6;">
+                                        <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">{{message}}</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Footer -->
+                                <div style="background-color: #f8fafc; padding: 15px 25px; border-top: 1px solid #e2e8f0; text-align: center;">
+                                    <p style="margin: 0; color: #64748b; font-size: 12px;">
+                                        Sent on {{time}} via Portfolio Contact Form
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Button -->
+                            <div style="text-align: center; margin-top: 30px;">
+                                <a href="mailto:{{from_email}}?subject=Re: Your Portfolio Contact" 
+                                   style="display: inline-block; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 14px;">
+                                    Reply to {{from_name}}
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div style="background-color: #1e293b; padding: 20px; text-align: center;">
+                            <p style="margin: 0; color: #94a3b8; font-size: 12px;">
+                                © 2025 Ishita Modi Portfolio. This message was sent via the contact form.
+                            </p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // Prepare template parameters
+            const templateParams = {
+                from_name: this.nameField.value.trim(),
+                from_email: this.emailField.value.trim(),
+                message: this.messageField.value.trim(),
+                time: new Date().toLocaleString(),
+                to_email: 'ishitamodi0@gmail.com', // Your email address
+                template_html: emailTemplate // Include the HTML template
+            };
+            
+            // Send email using EmailJS
+            const response = await emailjs.send(
+                this.emailjsConfig.serviceId,
+                this.emailjsConfig.templateId,
+                templateParams
+            );
+            
+            console.log('Email sent successfully:', response);
             this.showSuccessMessage();
             this.resetForm();
+            
+        } catch (error) {
+            console.error('Failed to send email:', error);
+            this.showErrorMessage('Failed to send message. Please try again or contact me directly at ishitamodi0@gmail.com');
+        } finally {
+            this.setLoadingState(false);
+        }
+    }
+
+    setLoadingState(isLoading) {
+        if (isLoading) {
+            this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            this.submitBtn.disabled = true;
+            this.submitBtn.style.opacity = '0.7';
+        } else {
+            this.submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+            this.submitBtn.disabled = false;
+            this.submitBtn.style.opacity = '1';
         }
     }
 
     showSuccessMessage() {
-        const submitBtn = this.form.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
+        this.formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
+        this.formStatus.className = 'form-status success';
+        this.formStatus.style.display = 'block';
         
-        submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
-        submitBtn.style.background = 'var(--success-color)';
-        submitBtn.disabled = true;
-        
+        // Hide success message after 5 seconds
         setTimeout(() => {
-            submitBtn.innerHTML = originalText;
-            submitBtn.style.background = 'var(--accent-color)';
-            submitBtn.disabled = false;
-        }, 3000);
+            this.formStatus.style.display = 'none';
+        }, 5000);
+    }
+
+    showErrorMessage(message) {
+        this.formStatus.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        this.formStatus.className = 'form-status error';
+        this.formStatus.style.display = 'block';
+        
+        // Hide error message after 7 seconds
+        setTimeout(() => {
+            this.formStatus.style.display = 'none';
+        }, 7000);
     }
 
     resetForm() {
@@ -230,6 +366,7 @@ class ContactFormHandler {
         this.clearError('nameError');
         this.clearError('emailError');
         this.clearError('messageError');
+        this.formStatus.style.display = 'none';
     }
 }
 
