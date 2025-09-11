@@ -109,9 +109,9 @@ class ContactFormHandler {
         
         // EmailJS configuration
         this.emailjsConfig = {
-            serviceId: 'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-            templateId: 'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
-            publicKey: 'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
+            serviceId: 'service_s2insp8', // Your EmailJS service ID
+            templateId: 'template_qgp35tb', // Your EmailJS template ID
+            publicKey: 'RMqzcUrLOqFJ82oqb' // INVALID KEY - Need to get correct one from EmailJS dashboard
         };
         
         this.init();
@@ -222,91 +222,35 @@ class ContactFormHandler {
             this.setLoadingState(true);
             
             // Initialize EmailJS (only needs to be done once)
+            console.log('Initializing EmailJS with public key:', this.emailjsConfig.publicKey);
             emailjs.init(this.emailjsConfig.publicKey);
             
-            // Professional email template HTML
+            // Simple email template (more reliable)
             const emailTemplate = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="utf-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                </head>
-                <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc;">
-                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                        <!-- Header -->
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
-                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 600;">New Contact Message</h1>
-                            <p style="color: #e2e8f0; margin: 8px 0 0 0; font-size: 14px;">Portfolio Contact Form</p>
-                        </div>
-                        
-                        <!-- Content -->
-                        <div style="padding: 40px 30px;">
-                            <div style="background-color: #f1f5f9; border-left: 4px solid #3b82f6; padding: 20px; margin-bottom: 30px; border-radius: 0 8px 8px 0;">
-                                <p style="margin: 0; color: #475569; font-size: 16px; line-height: 1.5;">
-                                    You've received a new message through your portfolio contact form. Please respond at your earliest convenience.
-                                </p>
-                            </div>
-                            
-                            <!-- Message Card -->
-                            <div style="background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-                                <!-- Message Header -->
-                                <div style="background-color: #f8fafc; padding: 20px; border-bottom: 1px solid #e2e8f0;">
-                                    <div style="display: flex; align-items: center; gap: 15px;">
-                                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                            <span style="color: #ffffff; font-size: 20px; font-weight: bold;">{{from_name}}</span>
-                                        </div>
-                                        <div>
-                                            <h3 style="margin: 0; color: #1e293b; font-size: 18px; font-weight: 600;">{{from_name}}</h3>
-                                            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">{{from_email}}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Message Content -->
-                                <div style="padding: 25px;">
-                                    <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; border-left: 3px solid #3b82f6;">
-                                        <p style="margin: 0; color: #374151; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">{{message}}</p>
-                                    </div>
-                                </div>
-                                
-                                <!-- Footer -->
-                                <div style="background-color: #f8fafc; padding: 15px 25px; border-top: 1px solid #e2e8f0; text-align: center;">
-                                    <p style="margin: 0; color: #64748b; font-size: 12px;">
-                                        Sent on {{time}} via Portfolio Contact Form
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <!-- Action Button -->
-                            <div style="text-align: center; margin-top: 30px;">
-                                <a href="mailto:{{from_email}}?subject=Re: Your Portfolio Contact" 
-                                   style="display: inline-block; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 14px;">
-                                    Reply to {{from_name}}
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <!-- Footer -->
-                        <div style="background-color: #1e293b; padding: 20px; text-align: center;">
-                            <p style="margin: 0; color: #94a3b8; font-size: 12px;">
-                                © 2025 Ishita Modi Portfolio. This message was sent via the contact form.
-                            </p>
-                        </div>
-                    </div>
-                </body>
-                </html>
+                <h2>New Contact Form Message</h2>
+                <p><strong>From:</strong> {{from_name}}</p>
+                <p><strong>Email:</strong> {{from_email}}</p>
+                <p><strong>Time:</strong> {{time}}</p>
+                <hr>
+                <h3>Message:</h3>
+                <p>{{message}}</p>
+                <hr>
+                <p><em>This message was sent from your portfolio contact form.</em></p>
             `;
 
-            // Prepare template parameters
+            // Prepare template parameters (simplified)
             const templateParams = {
                 from_name: this.nameField.value.trim(),
                 from_email: this.emailField.value.trim(),
                 message: this.messageField.value.trim(),
-                time: new Date().toLocaleString(),
-                to_email: 'ishitamodi0@gmail.com', // Your email address
-                template_html: emailTemplate // Include the HTML template
+                time: new Date().toLocaleString()
             };
+            
+            console.log('Sending email with params:', {
+                serviceId: this.emailjsConfig.serviceId,
+                templateId: this.emailjsConfig.templateId,
+                templateParams: templateParams
+            });
             
             // Send email using EmailJS
             const response = await emailjs.send(
@@ -316,12 +260,38 @@ class ContactFormHandler {
             );
             
             console.log('Email sent successfully:', response);
-            this.showSuccessMessage();
-            this.resetForm();
+            console.log('Response status:', response.status);
+            console.log('Response text:', response.text);
+            
+            if (response.status === 200) {
+                this.showSuccessMessage();
+                this.resetForm();
+            } else {
+                throw new Error(`EmailJS returned status ${response.status}: ${response.text}`);
+            }
             
         } catch (error) {
             console.error('Failed to send email:', error);
-            this.showErrorMessage('Failed to send message. Please try again or contact me directly at ishitamodi0@gmail.com');
+            console.error('Error details:', {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
+            
+            // More specific error messages
+            let errorMessage = 'Failed to send message. ';
+            if (error.message.includes('Invalid template')) {
+                errorMessage += 'Template configuration error. ';
+            } else if (error.message.includes('Invalid service')) {
+                errorMessage += 'Service configuration error. ';
+            } else if (error.message.includes('Invalid public key')) {
+                errorMessage += 'API key error. ';
+            } else if (error.message.includes('Network')) {
+                errorMessage += 'Network connection error. ';
+            }
+            errorMessage += 'Please try again or contact me directly at ishitamodi0@gmail.com';
+            
+            this.showErrorMessage(errorMessage);
         } finally {
             this.setLoadingState(false);
         }
