@@ -111,7 +111,7 @@ class ContactFormHandler {
         this.emailjsConfig = {
             serviceId: 'service_s2insp8', // Your EmailJS service ID
             templateId: 'template_qgp35tb', // Your EmailJS template ID
-            publicKey: 'RMqzcUrLOqFJ82oqb' // INVALID KEY - Need to get correct one from EmailJS dashboard
+            publicKey: 'dad-UbCjCV5g8d1jZ' // Your new EmailJS public key
         };
         
         this.init();
@@ -278,17 +278,25 @@ class ContactFormHandler {
                 stack: error.stack
             });
             
-            // More specific error messages
+            // More specific error messages with null checks
             let errorMessage = 'Failed to send message. ';
-            if (error.message.includes('Invalid template')) {
-                errorMessage += 'Template configuration error. ';
-            } else if (error.message.includes('Invalid service')) {
-                errorMessage += 'Service configuration error. ';
-            } else if (error.message.includes('Invalid public key')) {
-                errorMessage += 'API key error. ';
-            } else if (error.message.includes('Network')) {
-                errorMessage += 'Network connection error. ';
+            
+            if (error && error.message) {
+                if (error.message.includes('Invalid template')) {
+                    errorMessage += 'Template configuration error. ';
+                } else if (error.message.includes('Invalid service')) {
+                    errorMessage += 'Service configuration error. ';
+                } else if (error.message.includes('Invalid public key')) {
+                    errorMessage += 'API key error. ';
+                } else if (error.message.includes('Account not found')) {
+                    errorMessage += 'EmailJS account not found. Please check your configuration. ';
+                } else if (error.message.includes('Network')) {
+                    errorMessage += 'Network connection error. ';
+                }
+            } else {
+                errorMessage += 'Unknown error occurred. ';
             }
+            
             errorMessage += 'Please try again or contact me directly at ishitamodi0@gmail.com';
             
             this.showErrorMessage(errorMessage);
