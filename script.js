@@ -1,4 +1,3 @@
-// Navigation functionality
 class NavigationHandler {
     constructor() {
         this.currentSection = 'home';
@@ -81,15 +80,12 @@ class NavigationHandler {
     }
 
     handleAnchorLinks() {
-        // Handle hash changes in URL
         window.addEventListener('hashchange', () => {
             const hash = window.location.hash.substring(1);
             if (hash && document.getElementById(hash)) {
                 this.switchSection(hash);
             }
         });
-
-        // Handle initial hash on page load
         const initialHash = window.location.hash.substring(1);
         if (initialHash && document.getElementById(initialHash)) {
             this.switchSection(initialHash);
@@ -107,15 +103,37 @@ class ContactFormHandler {
         this.submitBtn = document.getElementById('submitBtn');
         this.formStatus = document.getElementById('formStatus');
         
-        // EmailJS configuration
         this.emailjsConfig = {
-            serviceId: 'service_s2insp8', // Your EmailJS service ID
-            templateId: 'template_qgp35tb', // Your EmailJS template ID
-            publicKey: 'dad-UbCjCV5g8d1jZ' // Your new EmailJS public key
+            serviceId: 'service_s2insp8',
+            templateId: 'template_qgp35tb',
+            publicKey: 'dad-UbCjCV5g8d1jZ'
         };
+        
+        // Test EmailJS configuration
+        this.testEmailJSConfig();
         
         this.init();
     }
+
+    testEmailJSConfig() {
+        console.log('EmailJS Configuration:');
+        console.log('Service ID:', this.emailjsConfig.serviceId);
+        console.log('Template ID:', this.emailjsConfig.templateId);
+        console.log('Public Key:', this.emailjsConfig.publicKey);
+        
+        if (typeof emailjs !== 'undefined') {
+            console.log('EmailJS library is loaded');
+            try {
+                emailjs.init(this.emailjsConfig.publicKey);
+                console.log('EmailJS initialized successfully');
+            } catch (error) {
+                console.error('EmailJS initialization failed:', error);
+            }
+        } else {
+            console.error('EmailJS library not found');
+        }
+    }
+
 
     init() {
         if (this.form) {
@@ -123,13 +141,10 @@ class ContactFormHandler {
                 e.preventDefault();
                 this.handleSubmit();
             });
-
-            // Real-time validation
             this.nameField.addEventListener('blur', () => this.validateName());
             this.emailField.addEventListener('blur', () => this.validateEmail());
             this.messageField.addEventListener('blur', () => this.validateMessage());
             
-            // Clear errors on input
             this.nameField.addEventListener('input', () => this.clearError('nameError'));
             this.emailField.addEventListener('input', () => this.clearError('emailError'));
             this.messageField.addEventListener('input', () => this.clearError('messageError'));
@@ -221,11 +236,14 @@ class ContactFormHandler {
         try {
             this.setLoadingState(true);
             
-            // Initialize EmailJS (only needs to be done once)
+            if (typeof emailjs === 'undefined') {
+                throw new Error('EmailJS library not loaded. Please check your internet connection.');
+            }
+            
             console.log('Initializing EmailJS with public key:', this.emailjsConfig.publicKey);
             emailjs.init(this.emailjsConfig.publicKey);
             
-            // Simple email template (more reliable)
+            await new Promise(resolve => setTimeout(resolve, 100));
             const emailTemplate = `
                 <h2>New Contact Form Message</h2>
                 <p><strong>From:</strong> {{from_name}}</p>
@@ -237,8 +255,6 @@ class ContactFormHandler {
                 <hr>
                 <p><em>This message was sent from your portfolio contact form.</em></p>
             `;
-
-            // Prepare template parameters (simplified)
             const templateParams = {
                 from_name: this.nameField.value.trim(),
                 from_email: this.emailField.value.trim(),
@@ -251,8 +267,6 @@ class ContactFormHandler {
                 templateId: this.emailjsConfig.templateId,
                 templateParams: templateParams
             });
-            
-            // Send email using EmailJS
             const response = await emailjs.send(
                 this.emailjsConfig.serviceId,
                 this.emailjsConfig.templateId,
@@ -262,26 +276,29 @@ class ContactFormHandler {
             console.log('Email sent successfully:', response);
             console.log('Response status:', response.status);
             console.log('Response text:', response.text);
-            
-            if (response.status === 200) {
+            if (response.status === 200 || response.text === 'OK') {
+                console.log('Email sent successfully, showing success message');
                 this.showSuccessMessage();
                 this.resetForm();
+                
+                alert('Message received! I\'ll get back to you soon.');
             } else {
+                console.log('EmailJS returned unexpected status:', response.status, response.text);
                 throw new Error(`EmailJS returned status ${response.status}: ${response.text}`);
             }
             
         } catch (error) {
             console.error('Failed to send email:', error);
             console.error('Error details:', {
-                name: error.name,
-                message: error.message,
-                stack: error.stack
+                name: error?.name || 'Unknown',
+                message: error?.message || 'No message',
+                stack: error?.stack || 'No stack trace'
             });
-            
-            // More specific error messages with null checks
             let errorMessage = 'Failed to send message. ';
             
             if (error && error.message) {
+                console.log('Error message:', error.message);
+                
                 if (error.message.includes('Invalid template')) {
                     errorMessage += 'Template configuration error. ';
                 } else if (error.message.includes('Invalid service')) {
@@ -292,8 +309,13 @@ class ContactFormHandler {
                     errorMessage += 'EmailJS account not found. Please check your configuration. ';
                 } else if (error.message.includes('Network')) {
                     errorMessage += 'Network connection error. ';
+                } else if (error.message.includes('EmailJS library not loaded')) {
+                    errorMessage += 'EmailJS library failed to load. Please check your internet connection. ';
+                } else {
+                    errorMessage += `Error: ${error.message}. `;
                 }
             } else {
+                console.log('No error message available');
                 errorMessage += 'Unknown error occurred. ';
             }
             
@@ -318,22 +340,40 @@ class ContactFormHandler {
     }
 
     showSuccessMessage() {
-        this.formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
-        this.formStatus.className = 'form-status success';
-        this.formStatus.style.display = 'block';
+        console.log('Showing success message');
+        console.log('Form status element:', this.formStatus);
         
-        // Hide success message after 5 seconds
+        if (this.formStatus) {
+            this.formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
+            this.formStatus.className = 'form-status success';
+            this.formStatus.style.display = 'block';
+            this.formStatus.style.opacity = '1';
+            this.formStatus.style.visibility = 'visible';
+            this.formStatus.style.zIndex = '9999';
+            console.log('Success message displayed');
+        } else {
+            console.error('Form status element not found');
+        }
         setTimeout(() => {
-            this.formStatus.style.display = 'none';
-        }, 5000);
+            if (this.formStatus) {
+                this.formStatus.style.display = 'none';
+            }
+        }, 10000);
     }
 
     showErrorMessage(message) {
-        this.formStatus.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-        this.formStatus.className = 'form-status error';
-        this.formStatus.style.display = 'block';
+        console.log('Showing error message:', message);
+        console.log('Form status element:', this.formStatus);
         
-        // Hide error message after 7 seconds
+        if (this.formStatus) {
+            this.formStatus.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            this.formStatus.className = 'form-status error';
+            this.formStatus.style.display = 'block';
+            console.log('Error message displayed');
+        } else {
+            console.error('Form status element not found');
+        }
+        
         setTimeout(() => {
             this.formStatus.style.display = 'none';
         }, 7000);
@@ -347,21 +387,16 @@ class ContactFormHandler {
         this.formStatus.style.display = 'none';
     }
 }
-
-// Smooth animations and interactions
 class AnimationHandler {
     constructor() {
         this.init();
     }
 
     init() {
-        // Add loading animation
         this.addLoadingAnimation();
         
-        // Intersection Observer for scroll animations
         this.initScrollAnimations();
         
-        // Add particle background effect
         this.initParticleEffect();
     }
 
@@ -386,15 +421,12 @@ class AnimationHandler {
                 }
             });
         }, observerOptions);
-
-        // Observe skill categories, project cards, etc.
         document.querySelectorAll('.skill-category, .project-card, .education-card, .achievement-card').forEach(el => {
             observer.observe(el);
         });
     }
 
     initParticleEffect() {
-        // Simple particle effect for the background
         const canvas = document.createElement('canvas');
         canvas.style.position = 'fixed';
         canvas.style.top = '0';
@@ -459,21 +491,16 @@ class AnimationHandler {
         });
     }
 }
-
-// Utility functions
 class UtilityHandler {
     constructor() {
         this.init();
     }
 
     init() {
-        // Add keyboard navigation support
         this.initKeyboardNavigation();
-        
-        // Add scroll-to-top functionality
+
         this.initScrollToTop();
-        
-        // Add dynamic theme adjustments
+  
         this.initThemeHandler();
     }
 
@@ -497,45 +524,53 @@ class UtilityHandler {
     }
 
     initScrollToTop() {
-        // Scroll to top when switching sections
+
         document.addEventListener('sectionChanged', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     }
 
     initThemeHandler() {
-        // Adjust theme based on time of day
+
         const hour = new Date().getHours();
         if (hour >= 6 && hour < 18) {
-            // Slightly lighter theme during day hours
+
             document.documentElement.style.setProperty('--background-dark', '#1a1a2e');
         }
     }
 }
 
-// Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.navigationHandler = new NavigationHandler();
-    window.contactFormHandler = new ContactFormHandler();
     window.animationHandler = new AnimationHandler();
     window.utilityHandler = new UtilityHandler();
+    setTimeout(() => {
+        console.log('Checking EmailJS availability...');
+        console.log('typeof emailjs:', typeof emailjs);
+        
+        if (typeof emailjs !== 'undefined') {
+            console.log('EmailJS is available');
+            window.contactFormHandler = new ContactFormHandler();
+            console.log('Contact form initialized with EmailJS');
+        } else {
+            console.error('EmailJS not loaded - contact form disabled');
+            console.error('Please check if the EmailJS CDN is accessible');
+        }
+    }, 1000);
     
-    console.log('🚀 Ishita Modi Portfolio loaded successfully!');
+    console.log('Ishita Modi Portfolio loaded successfully!');
 });
 
-// Performance optimization
 window.addEventListener('beforeunload', () => {
-    // Clean up animations
+
     const canvas = document.querySelector('canvas');
     if (canvas) {
         canvas.remove();
     }
 });
 
-// Service worker registration (for future PWA features)
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Could register service worker here for offline functionality
         console.log('Service Worker support detected');
     });
 }

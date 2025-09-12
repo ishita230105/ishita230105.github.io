@@ -49,8 +49,6 @@ Contact:
 
 Name: Ishita Modi
 
-Email: ishitamodi0@gmail.com
-
 LinkedIn: www.linkedin.com/in/ishitamodi2301
 
 GitHub: https://github.com/ishita230105
