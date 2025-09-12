@@ -13,18 +13,29 @@ class NavigationHandler {
         // Navigation click handlers
         this.navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
-                e.preventDefault();
+                // Only prevent default for navigation links with data-section attribute
                 const targetSection = link.getAttribute('data-section');
-                this.switchSection(targetSection);
-                this.closeMobileMenu();
+                if (targetSection) {
+                    e.preventDefault();
+                    this.switchSection(targetSection);
+                    this.closeMobileMenu();
+                }
+                // Allow other links (like social media) to work normally
             });
         });
 
-        // Project view button handler
-        const projectBtn = document.querySelector('[data-section="projects"]');
-        if (projectBtn) {
-            projectBtn.addEventListener('click', () => {
-                this.switchSection('projects');
+        // Project view button handler (apply to ALL elements targeting projects)
+        const projectTriggers = document.querySelectorAll('[data-section="projects"]');
+        if (projectTriggers && projectTriggers.length > 0) {
+            projectTriggers.forEach((el) => {
+                el.addEventListener('click', (event) => {
+                    // If this is not a nav link, ensure we don't accidentally prevent external navigation
+                    const isNavLink = el.classList.contains('nav-link');
+                    if (!isNavLink) {
+                        event.preventDefault?.();
+                        this.switchSection('projects');
+                    }
+                });
             });
         }
 
