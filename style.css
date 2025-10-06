@@ -33,8 +33,12 @@ body {
     min-height: 100vh;
     overflow-x: hidden; /* Prevent horizontal scroll */
     width: 100%;
-    transform: scale(0.95); /* Slightly reduce overall scale */
+    transform: scale(0.9); /* Reduce overall scale more aggressively */
     transform-origin: top center;
+    /* Force browser to not cache this page */
+    -webkit-transform: scale(0.9);
+    -moz-transform: scale(0.9);
+    -ms-transform: scale(0.9);
 }
 
 /* Navigation Styles */
