@@ -112,6 +112,7 @@ body {
     background: var(--text-primary);
     border-radius: 2px;
     transition: var(--transition);
+    display: block;
 }
 
 /* Main Content */
@@ -921,11 +922,12 @@ body {
     }
     
     .nav-toggle {
-        display: flex;
+        display: flex !important;
         flex-direction: column;
         cursor: pointer;
         gap: 5px;
         z-index: 1001;
+        position: relative;
     }
     
     .nav-toggle.active span:nth-child(1) {
