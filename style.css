@@ -50,7 +50,6 @@ body {
     background: rgba(26, 26, 46, 0.95);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    border-bottom: 1px solid var(--border-color);
     transition: var(--transition);
 }
 
@@ -125,12 +124,13 @@ body {
 .main-content {
     margin-top: 70px;
     min-height: calc(100vh - 70px);
+    padding-top: 0;
 }
 
 .section {
     display: none;
     min-height: calc(100vh - 70px);
-    padding: 4rem 0;
+    padding: 1rem 0;
     animation: fadeIn 0.6s ease-out;
 }
 
@@ -171,7 +171,7 @@ body {
 .home-container {
     max-width: 1200px; 
     margin: 0 auto;
-    padding: 2rem 1.5rem; 
+    padding: 0.5rem 1.5rem; 
     min-height: calc(100vh - 70px);
     display: flex;
     align-items: center;
