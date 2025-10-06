@@ -585,10 +585,3 @@ if ('serviceWorker' in navigator) {
         console.log('Service Worker support detected');
     });
 }
-const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.querySelector('.nav-links');
-
-navToggle.addEventListener('click', () => {
-  navLinks.classList.toggle('active');
-  navToggle.classList.toggle('active');
-});
