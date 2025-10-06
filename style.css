@@ -31,6 +31,8 @@ body {
     color: var(--text-primary);
     background: linear-gradient(135deg, var(--background-dark) 0%, var(--primary-color) 100%);
     min-height: 100vh;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    width: 100%;
 }
 
 /* Navigation Styles */
@@ -47,8 +49,7 @@ body {
 }
 
 .nav-container {
-    /* *** CHANGE: Increased max-width for wider layout *** */
-    max-width: 1400px; 
+    max-width: 1200px; 
     margin: 0 auto;
     padding: 0 2rem;
     display: flex;
@@ -131,8 +132,7 @@ body {
 }
 
 .section-container {
-    /* *** CHANGE: Increased max-width for wider layout *** */
-    max-width: 1400px; 
+    max-width: 1200px; 
     margin: 0 auto;
     padding: 0 2rem;
 }
@@ -162,10 +162,8 @@ body {
 
 /* Home Section */
 .home-container {
-    /* *** CHANGE: Increased max-width for wider layout *** */
-    max-width: 1400px; 
+    max-width: 1200px; 
     margin: 0 auto;
-    /* *** CHANGE: Reduced horizontal padding for a more "filled" look *** */
     padding: 0 1.5rem; 
     min-height: calc(100vh - 70px);
     display: flex;
@@ -518,8 +516,7 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 2rem;
-    /* *** CHANGE: Increased max-width for wider layout *** */
-    max-width: 1400px; 
+    max-width: 1200px; 
     margin: 0 auto;
 }
 
@@ -787,8 +784,7 @@ body {
 }
 
 .footer-content {
-    /* *** CHANGE: Increased max-width for wider layout *** */
-    max-width: 1400px; 
+    max-width: 1200px; 
     margin: 0 auto;
     padding: 0 2rem;
     text-align: center;
@@ -838,6 +834,17 @@ body {
 }
 
 /* Responsive Design */
+
+/* Large screens - prevent content from being too wide */
+@media (min-width: 1400px) {
+    .nav-container,
+    .section-container,
+    .home-container,
+    .footer-content {
+        max-width: 1200px;
+    }
+}
+
 @media (max-width: 1024px) {
     .hero-content {
         grid-template-columns: 1fr;
@@ -869,8 +876,8 @@ body {
     .section-container,
     .home-container,
     .footer-content {
-        max-width: 90%; /* Use percentage for fluid behavior */
-        padding: 0 2rem;
+        max-width: 95%; /* Use percentage for fluid behavior */
+        padding: 0 1.5rem;
     }
 }
 
