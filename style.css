@@ -4,6 +4,12 @@
     box-sizing: border-box;
 }
 
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
 :root {
     --primary-color: #1a1a2e;
     --secondary-color: #16213e;
@@ -39,6 +45,8 @@ body {
     -webkit-transform: scale(0.9);
     -moz-transform: scale(0.9);
     -ms-transform: scale(0.9);
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Navigation Styles */
@@ -51,6 +59,8 @@ body {
     backdrop-filter: blur(10px);
     z-index: 1000;
     transition: var(--transition);
+    margin: 0;
+    padding: 0;
 }
 
 .nav-container {
