@@ -513,6 +513,8 @@ class UtilityHandler {
         this.initScrollToTop();
   
         this.initThemeHandler();
+
+        // skills toggles removed per design cleanup
     }
 
     initKeyboardNavigation() {
@@ -549,6 +551,8 @@ class UtilityHandler {
             document.documentElement.style.setProperty('--background-dark', '#1a1a2e');
         }
     }
+
+    // removed skills toggle logic
 }
 
 document.addEventListener('DOMContentLoaded', () => {

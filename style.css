@@ -39,12 +39,6 @@ body {
     min-height: 100vh;
     overflow-x: hidden; /* Prevent horizontal scroll */
     width: 100%;
-    transform: scale(0.9); /* Reduce overall scale more aggressively */
-    transform-origin: top center;
-    /* Force browser to not cache this page */
-    -webkit-transform: scale(0.9);
-    -moz-transform: scale(0.9);
-    -ms-transform: scale(0.9);
     margin: 0 !important;
     padding: 0 !important;
 }
@@ -299,6 +293,24 @@ body {
     box-shadow: var(--shadow);
 }
 
+.hero-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-image .profile-card {
+    width: 100%;
+    max-width: 420px;
+}
+
+.profile-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
 .profile-card {
     background: var(--card-background);
     border-radius: var(--border-radius);
@@ -357,17 +369,21 @@ body {
 
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
 }
 
 .skill-category {
     background: var(--card-background);
-    padding: 2rem;
+    padding: 1.5rem 1.5rem 1.25rem;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     border: 1px solid var(--border-color);
     transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+    overflow: hidden; /* keep inner pills from bleeding outside */
 }
 
 .skill-category:hover {
@@ -375,34 +391,51 @@ body {
     box-shadow: var(--shadow-lg);
 }
 
-.skill-category h3 {
-    color: var(--accent-color);
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    font-weight: 600;
-}
+.skill-category-header { display:flex; align-items:center; justify-content:space-between; gap:0.75rem; }
+.skill-category h3 { color: var(--text-primary); margin-bottom: 0.75rem; font-size: 1.15rem; font-weight: 700; }
 
 .skills-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);        /* exactly 2 per row */
+    gap: 0.65rem;                                 /* even gaps */
+    align-content: start;                         /* natural stacking, no stretched gaps */
 }
 
 .skill-tag {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--accent-color);
-    padding: 0.5rem 1rem;
-    border-radius: 25px;
+    background: rgba(59, 130, 246, 0.08);
+    color: var(--text-primary);
+    padding: 0.4rem 0.6rem; /* tighter left-right spacing */
+    border-radius: 12px;
     font-size: 0.9rem;
     font-weight: 500;
-    border: 1px solid rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.18);
     transition: var(--transition);
+    white-space: normal;          /* allow wrapping so text isn't cut */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;                   /* fill the grid cell */
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: visible;
+    text-overflow: unset;
 }
+
+/* Make DBMS appear with the same block look as Presentation Skills */
+.skill-tag--block {
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.skill-tag.full { grid-column: 1 / -1; justify-content: flex-start; }
 
 .skill-tag:hover {
     background: var(--accent-color);
     color: white;
-    transform: scale(1.05);
+    transform: translateY(-1px);
 }
 
 /* Education Section */
@@ -860,6 +893,8 @@ body {
     .footer-content {
         max-width: 1200px;
     }
+    /* On very wide screens, let skills tags expand horizontally in 3 columns */
+    .skills-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 @media (max-width: 1024px) {
@@ -868,6 +903,7 @@ body {
         text-align: center;
         gap: 3rem;
     }
+    .hero-image .profile-card { margin: 0 auto; }
     
     .contact-content {
         grid-template-columns: 1fr;
